@@ -1,0 +1,7 @@
+pip install aliyun-python-sdk-sts
+pip install aliyun-python-sdk-mts
+pip install aliyun-python-sdk-core
+pip install oss2
+pip install tornado
+pip install greenlet
+pip install pytz
