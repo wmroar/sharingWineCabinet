@@ -68,13 +68,71 @@ class UserRegister(Base, Recode):
 
 class TelLoginCode(Base, Recode):
     __tablename__ = 'user_code'
-    id = Column(Integer, primary_key=True, autoincrement=True)
     tel = Column(VARCHAR(16), default = '')
     code = Column(VARCHAR(12), default = '')
     ftime = Column(Integer, default = 0)
 
 class TelLoginLog(Base, Recode):
     __tablename__ = 'user_tel_login'
-    id = Column(Integer, primary_key=True, autoincrement=True)
     tel = Column(VARCHAR(16), default = '')
     faild_times = Column(Integer, default = 0)
+
+class FdInfo(Base, Recode):
+    __tablename__ = 'fd_info'
+    name = Column(VARCHAR(32), default = '')
+    alias = Column(VARCHAR(32), default = '')
+    business = Column(Integer, default = '')
+    quntity_notify = Column(Integer, default = '')
+    model_mark = Column(VARCHAR(64), default = '')
+    item = Column(VARCHAR(64), default = '')
+    weight = Column(Float, default = '')
+    view = Column(VARCHAR(128), default = '')
+    x = Column(Float, default = '')
+    y = Column(Float, default = '')
+    z = Column(Float, default = '')
+    status = Column(Integer, default = '')
+    online_status = Column(Integer, default = '')
+
+class FdManagerInfo(Base, Recode):
+    __tablename__ = 'fd_manager_info'
+    manage_uid = Column(Integer, default = 0)
+    patrol_uid = Column(Integer, default = 0)
+    fid = Column(Integer, default = 0)
+    address = Column(VARCHAR(256), default = '')
+
+class FdGridInfo(Base, Recode):
+    __tablename__ = 'fd_grid_info'
+    fid = Column(Integer, default = 0)
+    grid_no = Column(Integer, default = 0)
+    pid = Column(Integer, default = 0)
+    status = Column(Integer, default = 0)
+
+class Goods(Base, Recode):
+    __tablename__ = 'goods'
+    name = Column(VARCHAR(30), default = '')
+    title = Column(VARCHAR(30), default = '')
+    discount_info = Column(VARCHAR(100), default = '')
+    des = Column(VARCHAR(10), default = 'love')
+    price = Column(Float, default =0)
+    ori_price = Column(Float, default =0)
+    is_best = Column(Integer, default = 1)
+    is_hot = Column(Integer, default = 1)
+    is_new = Column(Integer, default = 1)
+    weight = Column(Float, default = 1)
+    volume = Column(Float, default = 1)
+    quantity = Column(Integer, default = 1)
+    quantity_notify = Column(Integer, default = 1)
+    pic = Column(VARCHAR(255), default = '')
+    sellers = Column(Integer, default =0)
+    pay_times = Column(Integer, default =0)
+
+class Order(Base, Recode):
+    __tablename__ = 'order'
+    uid = Column(Integer, default = 1)
+    pid = Column(Integer, default = 1)
+    fid = Column(Integer, default = 1)
+    grid_no = Column(Integer, default = 1)
+    amount = Column(Float, default = 1)
+    status = Column(Integer, default = 0)
+    num = Column(Integer, default = 1)
+    address = Column(VARCHAR(256), default = '')
