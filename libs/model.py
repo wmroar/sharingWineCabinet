@@ -43,6 +43,7 @@ class SysUser(Base, Recode) :
     role = Column(Integer, default = 1, doc= '0 超级管理员 1普通管理员 2巡检人员')
 
 class Privilege(Base):
+    __tablename__ = 'privilege'
     role = Column(Integer)
     priv = Column(VARCHAR(128), doc='权限详情, 没有也别标注的都是通用的')
     des =  Column(VARCHAR(128),doc='权限详情说明')
