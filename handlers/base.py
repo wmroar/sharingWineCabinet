@@ -89,6 +89,7 @@ class BaseHandler(RequestHandler) :
         # 用户冻结之后不能正常登陆和使用
         if user.role == -1:
             return None
+        self.user = user
         return user
 
     def del_token(self, user_name) :

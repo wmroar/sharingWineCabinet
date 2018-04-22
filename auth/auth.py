@@ -37,7 +37,7 @@ def admin_required(f):
         if not user :
             return self.write(res_content(401, u'用户尚未登录,请登录'))
         # 普通管理员权限
-        if user.role != 10:
+        if user.role < 10:
             return self.write(res_content(405, u'需要管理员权限'))
         else:
             return f(self,*args,**kwargs)
