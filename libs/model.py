@@ -44,13 +44,13 @@ class SysUser(Base, Recode) :
 
 class Privilege(Base):
     __tablename__ = 'user_privilege'
+    id = Column(Integer, primary_key = True, autoincrement = True)
     role = Column(Integer)
     priv = Column(VARCHAR(128), doc='权限详情, 没有也别标注的都是通用的')
     des =  Column(VARCHAR(128),doc='权限详情说明')
 
 class Token(Base, Recode) :
     __tablename__ = 'token'
-    tid = Column(Integer, primary_key = True, autoincrement= True)
     user_name =  Column(VARCHAR(40))
     token  = Column(VARCHAR(128))
     times = Column(Integer, default = 0)

@@ -1,7 +1,7 @@
 # coding:utf-8
 from base import BaseHandler
 import logging
-from lib.model import Goods, FdGridInfo, Order, FdManagerInfo
+from libs.model import Goods, FdGridInfo, Order, FdManagerInfo
 from utils.utils import obj2dict
 from auth.auth import admin_required
 
@@ -51,7 +51,7 @@ class OrderListHandler(BaseHandler):
             total_sql += ' and o.create_time <= %s' % etime
 
         if status:
-            ostatus = 1 if status in ['1', '已支付'，1] else 2
+            ostatus = 1 if status in ['1', '已支付', 1] else 2
             sql += ' and o.status < %s' % ostatus
             total_sql += ' and o.status < %s' % ostatus
         if order_id:

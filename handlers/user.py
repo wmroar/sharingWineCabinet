@@ -3,7 +3,14 @@ from base import BaseHandler
 from libs.model import User, SysUser, TelLoginLog, TelLoginCode
 from md5 import md5
 from config.conf import settings
-from auth.auth import admin_required
+from utils.return_info import res_content
+from auth.auth import admin_required, login_required
+import uuid
+import time
+import random
+import requests
+import json
+import logging
 
 
 class SysUserLoginHandler(BaseHandler):
@@ -120,7 +127,7 @@ class TelCodeSendHandler(BaseHandler):
         tl = TelLoginCode(tel = tel, code = code, ftime = now)
         self.db.add(tl)
         self.db.commit()
-        params = {'key' : 'server_robot', 'phone' : tel, 'code' : code, 'action' : '8888'}
+        params = {'key' : 'server_robot', 'phone' : tel, 'code' : '你的验证码是: ' + code, 'action' : '8888', 'agent' : 'aixun'}
         response = requests.post('http://47.104.13.80:9001/phone', data = json.dumps(params))
         try :
             logging.info(response.content)

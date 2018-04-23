@@ -1,7 +1,7 @@
 # coding:utf-8
 from base import BaseHandler
 import logging
-from lib.model import Goods, FdGridInfo, Order, FdManagerInfo
+from libs.model import Goods, FdGridInfo, Order, FdManagerInfo
 from utils.utils import obj2dict
 from auth.auth import login_required
 
@@ -73,4 +73,72 @@ class NewOrderHandler(BaseHandler):
         self.db.add(order)
         self.db.commit()
         #todo 其他参数确认， 根据微信和支付宝需要的参数格式生成
+        if channel == 'wechat':
+            result = self.weichat_order(order, gift.product_id)
+            if ('return_code' in result) and ('result_code' in result):
+                data = dict(utils.xml2dict(result))
+                if data['return_code'] == 'FAIL':
+                    return self.write(res_content(838, u'请求微信支付失败'))
+                if data['result_code'] == 'FAIL':
+                    return self.write(res_content(839, u'请求微信支付失败'))
+                safeCode = data['prepay_id']
+                params = {'appid' : wechatconf['appid'],
+                        'partnerid' : wechatconf['mch_id'],
+                        'prepayid' : safeCode,
+                        'package' : 'Sign=WXPay',
+                        'noncestr' : uuid.uuid4().hex,
+                        'timestamp' : str(int(time.time()))}
+                sign= utils.wechat_sign(params, settings['wechat_public_key'])
+                params['sign'] = sign
+                params['order_id'] = str(order.id)
+                return self.write(res_content(200, u'success', params))
+        elif channel == 'alipay':
+            params = self.alipay_order(order, gift.product_id)
         return self.write_json(200, 'success', {'order_id' : order.id, 'amount' : goods.price})
+
+    def weichat_order(self, order, gname):
+        url = 'https://api.mch.weixin.qq.com/pay/unifiedorder'
+        params = copy.copy(wechatconf)
+        params_new = {
+            'nonce_str': uuid.uuid4().hex,
+            'version' : '1.0',
+            'sign_type' : 'MD5',
+            'notify_url' : 'http://www.dmgame.com/payment/wechat/notify/',
+            'body' : gname,
+            'out_trade_no' : str(order.id),
+            'total_fee' : str(int(order.amount * 100)),
+            'spbill_create_ip' : '47.104.129.1',
+            'trade_type' : 'APP',
+        }
+        params.update(params_new)
+        sign= utils.wechat_sign(params, settings['wechat_public_key'])
+        params['sign'] = sign
+        logging.info(utils.dict2xml(params))
+        r = requests.post(url, data = utils.dict2xml(params))
+        result = r.content
+        logging.info(result)
+        return result
+
+    def alipay_order(self, order, gname):
+        params = copy.copy(alipayconf)
+        params_new = {
+            'timestamp': utils.now(),
+            'version' : '1.0',
+            'sign_type' : 'RSA',
+            'notify_url' : 'http://www.dmgame.com/payment/alipay/notify/',
+            'biz_content' : {
+               'subject' : gname,
+               'out_trade_no' : str(order.id),
+               'timeout_express' : '90m',
+               'total_amount' : str(order.amount),
+               'product_code' : 'QUICK_MSECURITY_PAY',
+            }
+        }
+        params.update(params_new)
+        unsigned_items = utils.ordered_data(params)
+        unsigned_string = "&".join("{}={}".format(k, v) for k, v in unsigned_items)
+        signed_string = utils.sign_string(settings['ali_private_key'], unsigned_string)
+        params['sign'] = signed_string.encode('unicode_escape').decode('string_escape')
+        unsigned_items = utils.ordered_data(params)
+        unsigned_string = "&".join("{}={}".format(k, urllib.quote(v) if isinstance(v, str) else urllib.quote(json.dumps(v))) for k, v in unsigned_items)
+        return unsigned_string

@@ -1,7 +1,7 @@
 # coding:utf-8
 from base import BaseHandler
 import logging
-from lib.model import Goods, FdGridInfo, Order, FdManagerInfo
+from libs.model import Goods, FdGridInfo, Order, FdManagerInfo
 from utils.utils import obj2dict
 from auth.auth import admin_required
 
