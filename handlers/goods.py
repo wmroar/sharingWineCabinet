@@ -1,10 +1,11 @@
 # coding:utf-8
 from base import BaseHandler
 import logging
-from lib.model import Goods, FdGridInfo
+from libs.model import Goods, FdGridInfo
 from utils.utils import obj2dict
+from auth.auth import admin_required, login_required
 
-class GoodsListHandler(BaseHandler)
+class GoodsListHandler(BaseHandler):
     def get(self):
         return self.post()
     def post(self):
@@ -48,5 +49,32 @@ class FdGoodsListHandler(BaseHandler):
             tmp['grid_no'] = one[0].grid_no
             tmp['fid'] = one[0].fid
             final.append(tmp)
-        result = {'total_page' : total_num, 'datas' : final]}
+        result = {'total_page' : total_num, 'datas' : final}
         return self.write(200, 'success', result)
+
+class FGoodsAddHandler(BaseHandler):
+    @admin_required
+    def post(self):
+        attrs = ['name', 'title', 'discount_info', 'des', 'price', 'ori_price', 'is_best', 'is_hot', 'is_new', 'weight', 'volume', 'quantity', 'quantity_notify', 'pic', 'sellers', 'pay_times']
+        good = Goods()
+        for attr in attrs:
+            if self.args.get(attr, ''):
+                setattr(good, attr, self.args.get(attr, ''))
+        self.db.add(good)
+        self.db.commit()
+        return self.write_json(200, 'success')
+
+class FGoodsUpdateHandler(BaseHandler):
+    @admin_required
+    def post(self):
+        pid = self.args.get('pid', 0)
+        attrs = ['name', 'title', 'discount_info', 'des', 'price', 'ori_price', 'is_best', 'is_hot', 'is_new', 'weight', 'volume', 'quantity', 'quantity_notify', 'pic', 'sellers', 'pay_times']
+        good = self.db.query(Goods).filter(Goods.id == pid).first()
+        if not good:
+            return self.write_json('602', 'args error')
+        for attr in attrs:
+            if self.args.get(attr, ''):
+                setattr(good, attr, self.args.get(attr, ''))
+        self.db.add(good)
+        self.db.commit()
+        return self.write_json(200, 'success')

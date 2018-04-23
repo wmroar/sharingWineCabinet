@@ -1,6 +1,5 @@
 # -*- coding:utf-8 -*-
 from handlers import base
-from libs.model import ReuqestLog
 from utils.return_info import res_content
 import functools
 import greenlet
@@ -19,10 +18,6 @@ def login_required(f):
                 self.user = user
                 # self.set_user_game_info(self.user.id)
                 result = f(self, *args,**kwargs)
-                # 记录访问请求
-                rl = ReuqestLog(uid = self.user.id, host = self.request.remote_ip, uri = self.request.uri)
-                self.db.add(rl)
-                self.db.commit()
                 self.finish()
             return result
         # greenlet_base_func()
