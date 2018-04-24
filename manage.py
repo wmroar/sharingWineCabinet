@@ -35,7 +35,7 @@ class MyApplication(tornado.web.Application) :
         sdb.close()
 
         # 创建redis连接池
-        self.redis = cache_manager_init()
+        # self.redis = cache_manager_init()
         super(MyApplication, self).__init__(handlers, **settings)
 
 def make_app():
