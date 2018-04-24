@@ -1,0 +1,18 @@
+insert into goods(name, title, price, quantity) values ('商品1', '商品1', 10, 1000);
+insert into goods(name, title, price, quantity) values ('商品2', '商品2', 10, 1000);
+insert into goods(name, title, price, quantity) values ('商品3', '商品3', 10, 1000);
+insert into goods(name, title, price, quantity) values ('商品4', '商品4', 10, 1000);
+insert into goods(name, title, price, quantity) values ('商品5', '商品5', 10, 1000);
+
+alter table fd_info change business business varchar(64);
+alter table user add column channel varchar(128);
+
+insert into fd_info(name, alias, business, status, online_status) values ('设备1', '设备111', '科技园', 1,1);
+
+insert into fd_grid_info(fid, grid_no, pid, status) values(1, 1, 1,1);
+insert into fd_grid_info(fid, grid_no, pid, status) values(1, 2, 2,1);
+insert into fd_grid_info(fid, grid_no, pid, status) values(1, 3, 3,1);
+insert into fd_grid_info(fid, grid_no, pid, status) values(1, 4, 4,1);
+insert into fd_grid_info(fid, grid_no, pid, status) values(1, 5, 5,1);
+
+insert into fd_manager_info(manage_uid, patrol_uid, fid, address) values (1,1,1,'研祥科技大厦');

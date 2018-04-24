@@ -4,6 +4,15 @@ import logging
 from libs.model import Goods, FdGridInfo, Order, FdManagerInfo
 from utils.utils import obj2dict
 from auth.auth import login_required
+from config.conf import wechatconf, alipayconf, settings
+import copy
+import uuid
+import requests
+import time
+from utils import utils
+import urllib
+from utils.return_info import res_content
+
 
 class UserOrderListHandler(BaseHandler):
     @login_required
@@ -49,7 +58,7 @@ class GoodsDetailHandler(BaseHandler):
         tmp['address'] = order.address
 
         tmp['order_id'] = order.id
-        tmp['create_time'] = order.create_time
+        tmp['create_time'] = order.create_time.strftime("%Y-%m-%d")
         return self.write_json(200, 'success', tmp)
 
     def get(self):
@@ -60,6 +69,7 @@ class NewOrderHandler(BaseHandler):
     def post(self):
         fid = self.args.get('fid', 0)
         grid_no = self.args.get('grid_no', 0)
+        channel = self.args.get('channel', self.user.channel)
         finfo = self.db.query(FdGridInfo).filter(FdGridInfo.fid == fid, FdGridInfo.grid_no == grid_no).first()
         if not finfo:
             return self.write_json(602, 'args error')
@@ -74,7 +84,7 @@ class NewOrderHandler(BaseHandler):
         self.db.commit()
         #todo 其他参数确认， 根据微信和支付宝需要的参数格式生成
         if channel == 'wechat':
-            result = self.weichat_order(order, gift.product_id)
+            result = self.weichat_order(order, goods.name)
             if ('return_code' in result) and ('result_code' in result):
                 data = dict(utils.xml2dict(result))
                 if data['return_code'] == 'FAIL':
@@ -93,7 +103,8 @@ class NewOrderHandler(BaseHandler):
                 params['order_id'] = str(order.id)
                 return self.write(res_content(200, u'success', params))
         elif channel == 'alipay':
-            params = self.alipay_order(order, gift.product_id)
+            params = self.alipay_order(order, goods.name)
+            return self.write(res_content(200, u'success', params))
         return self.write_json(200, 'success', {'order_id' : order.id, 'amount' : goods.price})
 
     def weichat_order(self, order, gname):
@@ -103,7 +114,7 @@ class NewOrderHandler(BaseHandler):
             'nonce_str': uuid.uuid4().hex,
             'version' : '1.0',
             'sign_type' : 'MD5',
-            'notify_url' : 'http://www.dmgame.com/payment/wechat/notify/',
+            'notify_url' : 'http://api.vbar.net.cn/payment/wechat/notify',
             'body' : gname,
             'out_trade_no' : str(order.id),
             'total_fee' : str(int(order.amount * 100)),
@@ -125,7 +136,7 @@ class NewOrderHandler(BaseHandler):
             'timestamp': utils.now(),
             'version' : '1.0',
             'sign_type' : 'RSA',
-            'notify_url' : 'http://www.dmgame.com/payment/alipay/notify/',
+            'notify_url' : 'http://api.vbar.net.cn/payment/alipay/notify',
             'biz_content' : {
                'subject' : gname,
                'out_trade_no' : str(order.id),

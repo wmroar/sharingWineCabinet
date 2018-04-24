@@ -31,7 +31,7 @@ class FdGoodsListHandler(BaseHandler):
     def post(self):
         num = self.args.get('num', 15)
         page = self.args.get('page', 1)
-        fd = self.args.get('fid', 0)
+        fid = self.args.get('fid', 0)
         final = []
         try:
             num  = int(num)
@@ -40,7 +40,7 @@ class FdGoodsListHandler(BaseHandler):
             logging.info(e)
             return self.write_json(600, '参数错误')
         start_num = (page - 1) * num
-        datas = self.db.query(FdGridInfo, Goods).join(Goods, FdGridInfo.gid == Goods.id, FdGridInfo.fid == fid).limit(num).offset(start_num)
+        datas = self.db.query(FdGridInfo, Goods).join(Goods, FdGridInfo.pid == Goods.id).filter(FdGridInfo.fid == fid).limit(num).offset(start_num)
         if not datas:
             return self.write_json(601, '未查询到数据')
         total_num = self.db.query(FdGridInfo.id).filter(FdGridInfo.id == fid).count()
@@ -50,7 +50,7 @@ class FdGoodsListHandler(BaseHandler):
             tmp['fid'] = one[0].fid
             final.append(tmp)
         result = {'total_page' : total_num, 'datas' : final}
-        return self.write(200, 'success', result)
+        return self.write_json(200, 'success', result)
 
 class FGoodsAddHandler(BaseHandler):
     @admin_required

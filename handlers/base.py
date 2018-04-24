@@ -77,7 +77,7 @@ class BaseHandler(RequestHandler) :
         if len(authinfo) != 4 :
             return None
         user_name = authinfo[1]
-        token = self.db.query(Token).filter(Token.token == self.args.get('Authorization', ''), Token.user_name == user_name).order_by(Token.tid.desc()).first()
+        token = self.db.query(Token).filter(Token.token == self.args.get('Authorization', ''), Token.user_name == user_name).order_by(Token.id.desc()).first()
         if not token :
             return None
         if (datetime.now() - token.update_time).seconds > 20 * 24 * 60 * 60 :
@@ -102,9 +102,9 @@ class BaseHandler(RequestHandler) :
         self.del_token(user_name)
         token_str = base64.b64encode(','.join(['emm', user_name, 'youcanguessthis', str(int(time.time()))]))
         token = Token(token = token_str, user_name = user_name)
-        self.record_login(user_name)
+        # self.record_login(user_name)
         self.db.add(token)
-        self.add_token2redis(user_name,token_str)
+        # self.add_token2redis(user_name,token_str)
         self.db.commit()
         return token_str
 
@@ -112,7 +112,7 @@ class BaseHandler(RequestHandler) :
         result = {'code' : code if code else 200, 'info' : info, 'data' : {}}
         if data:
             result['data'] = data
-        self.write(write_json)
+        self.write(result)
 
 class UploadHandler(BaseHandler) :
     def options(self) :

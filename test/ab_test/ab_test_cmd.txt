@@ -1,0 +1,3 @@
+ab -n 3 -c 1 -p ./data_user_auth.json -T "application/json" localhost:8888/guide/will_do_guide/
+ab -n 3 -c 1 -p ./data_user_auth.json -T "application/json" 119.23.77.222:8081/game/info/
+

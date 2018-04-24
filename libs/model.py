@@ -32,6 +32,7 @@ class User(Base, Recode) :
     reg_time = Column(DateTime, default=datetime.now)
     role = Column(Integer, default = 1)
     first_pay = Column(Integer, default = 0)
+    channel = Column(VARCHAR(128))
     idfa = Column(VARCHAR(128))
 
 class SysUser(Base, Recode) :
@@ -82,7 +83,7 @@ class FdInfo(Base, Recode):
     __tablename__ = 'fd_info'
     name = Column(VARCHAR(32), default = '')
     alias = Column(VARCHAR(32), default = '')
-    business = Column(Integer, default = '')
+    business = Column(VARCHAR(64), default = '')
     quntity_notify = Column(Integer, default = '')
     model_mark = Column(VARCHAR(64), default = '')
     item = Column(VARCHAR(64), default = '')
