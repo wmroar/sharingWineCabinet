@@ -5,8 +5,8 @@ import md5
 
 
 
-# host = 'http://47.104.85.224'
-host = 'http://localhost:8081'
+host = 'http://120.79.79.20'
+# host = 'http://localhost:8081'
 
 skey = 'ZW1tLDEzNTcxODI2Nzk5LHlvdWNhbmd1ZXNzdGhpcywxNTI0NTMyOTk2'
 USER_NAME = 'wangshisan55'
