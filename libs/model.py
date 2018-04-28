@@ -33,6 +33,7 @@ class User(Base, Recode) :
     role = Column(Integer, default = 1)
     first_pay = Column(Integer, default = 0)
     channel = Column(VARCHAR(128))
+    head = Column(VARCHAR(256), default = '/static/default_head.png')
     idfa = Column(VARCHAR(128))
 
 class SysUser(Base, Recode) :
@@ -138,3 +139,8 @@ class Order(Base, Recode):
     status = Column(Integer, default = 0)
     num = Column(Integer, default = 1)
     address = Column(VARCHAR(256), default = '')
+
+class FAQ(Base, Recode):
+    __tablename__ = 'order'
+    question = Column(VARCHAR(648), default = '')
+    answer = Column(VARCHAR(648), default = '')

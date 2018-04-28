@@ -1,5 +1,5 @@
 # coding=utf-8
-from handlers import base,user,admin_index, admin_order, fdinfo, goods, order
+from handlers import base,user,admin_index, admin_order, fdinfo, goods, order, other
 from conf import settings
 from tornado import web
 
@@ -27,6 +27,10 @@ urls = [
     # 设备
     (r'/fds', fdinfo.FdinfoListHandler),
     (r'/fds/detail', fdinfo.FdinfoDetailHandler),
+
+    # 其他基础信息
+    (r'/faq', other.FAQHandler),
+    (r'/img/upload', base.UploadHandler),
 
     # 短信接口, 发送验证码, 校验等
     (r'/user/tel/login', user.TelLoginHandler),

@@ -122,7 +122,7 @@ class UploadHandler(BaseHandler) :
                 filename = os.path.dirname(__file__) + '/../static/uploads/' +one['filename']
                 with open(filename, 'wb') as a:
                     a.write(one['body'])
-                result['url'] = self.oss.get_sign_url(one['filename'])
+                result['url'] = '/static/' + one['filename']
                 result['name'] = one['filename']
         return self.write(json.dumps(result))
 

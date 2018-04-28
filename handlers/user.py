@@ -74,7 +74,7 @@ class TelCodeHandler(BaseHandler):
             token = self.add_token(tel)
         login_log.faild_times = 0
         self.db.commit()
-        return self.write(res_content(200, u'success', {'skey' : token, 'user' : tel, 'role' : 1}))
+        return self.write(res_content(200, u'success', {'skey' : token, 'user' : tel, 'role' : 1, 'head' : user.head}))
 
 class TelLoginHandler(TelCodeHandler):
     def post(self):
@@ -185,3 +185,23 @@ class TelBindHandler(BaseHandler):
         login_log.faild_times = 0
         self.db.commit()
         return self.write(res_content(200, u'success', {'skey' : token, 'user' : tel, 'role' : 'tel'}))
+
+class Logout(BaseHandler) :
+    @login_required
+    def post(self) :
+        user = self.get_current_user()
+        log_user_info(user, 'logout')
+        self.del_token(user.user_name)
+        return self.write(res_content(200, u'注销成功'))
+
+class UserHeadSetterHandler(BaseHandler):
+    @login_required
+    def post(self):
+        img = self.args.get('img', '')
+        user = self.get_current_user()
+        imgfile = os.path.dirname(__file__) + '/../static/uploads/' + img
+        if os.path.exists(imgfile):
+            return self.write(604, '图片文件不存在')
+        user.head = img
+        self.db.commit()
+        return self.write_json(200, 'success', {'head' : '/static/' + img})
